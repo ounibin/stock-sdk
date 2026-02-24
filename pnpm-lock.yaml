@@ -11,6 +11,9 @@ dependencies:
   cheerio:
     specifier: ^1.2.0
     version: 1.2.0
+  dayjs:
+    specifier: ^1.11.19
+    version: 1.11.19
   iconv-lite:
     specifier: ^0.7.2
     version: 0.7.2
@@ -1275,6 +1278,10 @@ packages:
   /css-what@6.2.2:
     resolution: {integrity: sha512-u/O3vwbptzhMs3L1fQE82ZSLHQQfto5gyZzwteVIEyeaY5Fc7R4dapF/BvRoSYFeqfBk4m0V1Vafq5Pjv25wvA==}
     engines: {node: '>= 6'}
+    dev: false
+
+  /dayjs@1.11.19:
+    resolution: {integrity: sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==}
     dev: false
 
   /debug@4.4.3:
