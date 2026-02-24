@@ -1,0 +1,31 @@
+{
+  "name": "stock-sdk",
+  "version": "1.0.0",
+  "description": "中国股票市场SDK，支持实时行情、板块排名和交易所判断等功能",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "stock",
+    "china",
+    "exchange",
+    "market",
+    "finance"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.5",
+    "cheerio": "^1.2.0",
+    "iconv-lite": "^0.7.2"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test",
+    "examples": "examples"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}
