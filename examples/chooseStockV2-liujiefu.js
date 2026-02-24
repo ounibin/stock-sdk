@@ -3,6 +3,7 @@ const {
   getAllQuotes,
   getRealTimeNet,
   filterRedCrossStar,
+  kdj,
   getPreviousTradingDay
 } = require('../lib')
 
@@ -59,22 +60,19 @@ async function main() {
     for (let index = 0; index < resList.length; index++) {
       const element = resList[index];
       const code = element.code
-      const res = await getRealTimeNet(code)
-      // console.log(`股票 ${code} 的实时资金流向:`, res)
-      if (res) {
-        if (res.extraLargeNetInflow > 0) {
-          if (res.largeNetInflow > 0) {
-            resList2.push(element)
-          } else if (res.extraLargeNetInflow + res.largeNetInflow > 0) {
-            resList2.push(element)
-          }
-        }
+      const {
+        k,
+        d,
+        j
+      } = await kdj(code, day1)
+
+      if (Math.abs(k - j) <= 5 && Math.abs(d - k) <= 5) {
+        resList2.push(element)
       }
     }
-
-    console.log(`大单选股数====`, resList2.length)
+    console.log(`kdj选股结果总数：`, resList2.length)
     resList2.forEach((item, index) => {
-      console.log(`大单选股结果${index + 1}：`, item.code)
+      console.log(`kdj选股结果${index + 1}：`, item.code)
     })
 
   } catch (err) {
