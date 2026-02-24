@@ -20,6 +20,7 @@
     "axios": "^1.13.5",
     "cheerio": "^1.2.0",
     "dayjs": "^1.11.19",
+    "eastmoney-data-sdk": "^1.0.5",
     "iconv-lite": "^0.7.2"
   },
   "directories": {

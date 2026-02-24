@@ -17,6 +17,9 @@ dependencies:
   dayjs:
     specifier: ^1.11.19
     version: 1.11.19
+  eastmoney-data-sdk:
+    specifier: ^1.0.5
+    version: 1.0.5
   iconv-lite:
     specifier: ^0.7.2
     version: 0.7.2
@@ -1366,6 +1369,15 @@ packages:
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
     dev: true
+
+  /eastmoney-data-sdk@1.0.5:
+    resolution: {integrity: sha512-KjQwpsDTdM0jwfCDH7VgMC7cGbkIWOGnzx1EE8Txu9dRBxEjkuUfta/eFoHncvvp1jD7DLSm0tvWuZMXSMxieQ==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      axios: 1.13.5
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /electron-to-chromium@1.5.302:
     resolution: {integrity: sha512-sM6HAN2LyK82IyPBpznDRqlTQAtuSaO+ShzFiWTvoMJLHyZ+Y39r8VMfHzwbU8MVBzQ4Wdn85+wlZl2TLGIlwg==}
