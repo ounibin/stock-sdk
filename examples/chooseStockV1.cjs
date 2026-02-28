@@ -8,6 +8,7 @@ const {
 
 
 async function main() {
+  // const day1 = '20260227'
   const day1 = dayjs().format('YYYYMMDD')
   const lastDay = await getPreviousTradingDay(day1)
   try {
@@ -47,7 +48,6 @@ async function main() {
     })
 
     // 打印
-    console.log('放量结果总数：', resList.length)
     resList.forEach((item, index) => {
       console.log(`放量结果${index + 1}：`, item.code)
     })
@@ -70,7 +70,6 @@ async function main() {
       }
     }
 
-    console.log(`大单选股数====`, resList2.length)
     resList2.forEach((item, index) => {
       console.log(`大单选股结果${index + 1}：`, item.code)
     })

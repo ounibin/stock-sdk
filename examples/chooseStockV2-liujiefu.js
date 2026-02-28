@@ -9,6 +9,7 @@ const {
 
 
 async function main() {
+  // const day1 = '20260227'
   const day1 = dayjs().format('YYYYMMDD')
   const lastDay = await getPreviousTradingDay(day1)
   try {
@@ -38,19 +39,14 @@ async function main() {
     list.forEach((item) => {
       const item_last = lastList.find((n) => n.code === item.code)
       if (item_last) {
-        // console.log('异步打印----item_last: ', item.code, item)
         const changePercent = (((item.close - item_last.open) / item_last.open) * 100).toFixed(2)
-        // console.log(`changePercent====`, changePercent)
-        const isChuangYe = (/^30/).test(item.code)
-        const isZhangTing = isChuangYe ? changePercent >= 19 : changePercent >= 9
-        if (item.volume >= item_last.volume * 2.5 && changePercent >= 5 && !isZhangTing) {
+        if (item.volume >= item_last.volume * 2.5 && changePercent >= 3 && changePercent <= 7) {
           resList.push(item)
         }
       }
     })
 
     // 打印
-    console.log('放量结果总数：', resList.length)
     resList.forEach((item, index) => {
       console.log(`放量结果${index + 1}：`, item.code)
     })
@@ -60,19 +56,21 @@ async function main() {
     for (let index = 0; index < resList.length; index++) {
       const element = resList[index];
       const code = element.code
-      const {
-        k,
-        d,
-        j
-      } = await kdj(code, day1)
-
-      if (Math.abs(k - j) <= 5 && Math.abs(d - k) <= 5) {
-        resList2.push(element)
+      const res = await getRealTimeNet(code)
+      // console.log(`股票 ${code} 的实时资金流向:`, res)
+      if (res) {
+        if (res.extraLargeNetInflow > 0) {
+          if (res.largeNetInflow > 0) {
+            resList2.push(element)
+          } else if (res.extraLargeNetInflow + res.largeNetInflow > 0) {
+            resList2.push(element)
+          }
+        }
       }
     }
-    console.log(`kdj选股结果总数：`, resList2.length)
+
     resList2.forEach((item, index) => {
-      console.log(`kdj选股结果${index + 1}：`, item.code)
+      console.log(`大单选股结果${index + 1}：`, item.code)
     })
 
   } catch (err) {
