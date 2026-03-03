@@ -6,7 +6,7 @@ const {
   getRealTimeNet,
   filterRedCrossStar,
   getPreviousTradingDay,
-  getRealTimeAllQuotes
+  getAllQuotesRealTime
 } = require('../lib')
 
 
@@ -19,7 +19,7 @@ async function main(day1, useLocalData = false) {
       list = await require(`./data/${day1}.json`)
     } else {
       console.log('正在获取实时行情数据...')
-      list = await getRealTimeAllQuotes(day1)
+      list = await getAllQuotesRealTime()
       const filePath = path.join(__dirname, `data/${day1}.json`)
       fs.writeFileSync(filePath, JSON.stringify(list, null, 2))
     }

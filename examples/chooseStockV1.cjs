@@ -71,7 +71,7 @@ async function main() {
     }
 
     resList2.forEach((item, index) => {
-      console.log(`大单选股结果${index + 1}：`, item.code)
+      console.log(`大单选股结果${index + 1}：`, item.code, item.name)
     })
 
   } catch (err) {
