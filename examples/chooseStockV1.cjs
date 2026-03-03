@@ -8,8 +8,8 @@ const {
 
 
 async function main() {
-  // const day1 = '20260227'
-  const day1 = dayjs().format('YYYYMMDD')
+  const day1 = '20260302'
+  // const day1 = dayjs().format('YYYYMMDD')
   const lastDay = await getPreviousTradingDay(day1)
   try {
     let list = await getAllQuotes(day1)
@@ -41,7 +41,7 @@ async function main() {
       const item_last = lastList.find((n) => n.code === item.code)
       if (item_last) {
         // console.log('异步打印----item_last: ', item.volume, item_last.volume * 2)
-        if ((item.close - item.open) > 0 && item.volume > item_last.volume * 1.5 && item_last.close - item_last.open < 0) {
+        if (item.close > item.open && item.volume > item_last.volume * 1.5 && item_last.open > item_last.close) {
           resList.push(item)
         }
       }
