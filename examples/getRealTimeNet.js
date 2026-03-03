@@ -11,6 +11,6 @@ const {
 
 // 使用示例
 (async () => {
-  const data = await getRealTimeNet('002050');
+  const data = await getRealTimeNet('601069');
   console.log('实时净流入:', data);
 })();
