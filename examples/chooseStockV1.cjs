@@ -1,19 +1,34 @@
 const dayjs = require('dayjs')
+const path = require('path')
+const fs = require('fs')
 const {
   getAllQuotes,
   getRealTimeNet,
   filterRedCrossStar,
-  getPreviousTradingDay
+  getPreviousTradingDay,
+  getAllQuotesRealTime
 } = require('../lib')
 
 
-async function main() {
-  const day1 = '20260302'
-  // const day1 = dayjs().format('YYYYMMDD')
+async function main(day1, useLocalData = false) {
+  if (!day1) {
+    console.log('请提供有效的日期参数')
+    throw new Error('Invalid date parameter, please provide a valid date string in the format YYYYMMDD.')
+  }
   const lastDay = await getPreviousTradingDay(day1)
+  console.log(`指定开盘日====`, day1)
+  console.log(`上个开盘日====`, lastDay)
   try {
-    let list = await getAllQuotes(day1)
-    console.log('今天开盘日: ', day1, '数据长度为', list.length)
+    let list = []
+    if (useLocalData) {
+      console.log('使用本地数据，跳过网络请求')
+      list = await require(`./data/${day1}.json`)
+    } else {
+      console.log('正在获取实时行情数据...')
+      list = await getAllQuotesRealTime()
+      const filePath = path.join(__dirname, `data/${day1}.json`)
+      fs.writeFileSync(filePath, JSON.stringify(list, null, 2))
+    }
     const lastList = await getAllQuotes(lastDay)
     console.log('上个开盘日: ', lastDay, '数据长度为', lastList.length)
 
@@ -79,5 +94,5 @@ async function main() {
   }
 }
 
-
-main().catch(console.error)
+const today = dayjs().format('YYYYMMDD')
+main(today, false).catch(console.error)
