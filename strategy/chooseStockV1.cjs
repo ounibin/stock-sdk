@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const {
   getAllQuotes,
-  getRealTimeNet,
+  getNetRealTime,
   filterRedCrossStar,
   getPreviousTradingDay,
   getAllQuotesRealTime
@@ -48,14 +48,14 @@ async function main(day1, useLocalData = false) {
       const bigPrice = item.trade > 10
       return !isKechuang && !isXinSanBan && !isJingA
     })
-    const list_hongshizi = filterRedCrossStar(list)
-    list = list_hongshizi
+
+    // 红十字
+    list = filterRedCrossStar(list)
 
     const resList = []
     list.forEach((item) => {
       const item_last = lastList.find((n) => n.code === item.code)
       if (item_last) {
-        // console.log('异步打印----item_last: ', item.volume, item_last.volume * 2)
         if (item.close > item.open && item.volume > item_last.volume * 1.5 && item_last.open > item_last.close) {
           resList.push(item)
         }
@@ -67,12 +67,17 @@ async function main(day1, useLocalData = false) {
       console.log(`放量结果${index + 1}：`, item.code)
     })
 
+    if (resList.length <= 3) {
+      console.log('结果太少，不进行下一轮筛选')
+      return
+    }
+
     // 第二轮筛选
     let resList2 = []
     for (let index = 0; index < resList.length; index++) {
       const element = resList[index];
       const code = element.code
-      const res = await getRealTimeNet(code)
+      const res = await getNetRealTime(code)
       // console.log(`股票 ${code} 的实时资金流向:`, res)
       if (res) {
         if (res.extraLargeNetInflow > 0 && res.largeNetInflow > 0) {

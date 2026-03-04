@@ -3,8 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const {
   getAllQuotes,
-  getRealTimeNet,
-  filterRedCrossStar,
+  getNetRealTime,
   getPreviousTradingDay,
   getAllQuotesRealTime
 } = require('../lib')
@@ -24,9 +23,6 @@ async function main(day1, useLocalData = false) {
       fs.writeFileSync(filePath, JSON.stringify(list, null, 2))
     }
 
-
-
-
     console.log('今天开盘日: ', day1, '数据长度为', list.length)
     const lastList = await getAllQuotes(lastDay)
     console.log('上个开盘日: ', lastDay, '数据长度为', lastList.length)
@@ -44,7 +40,7 @@ async function main(day1, useLocalData = false) {
       const isKechuang = /^688|689|787|789/.test(item.code)
       const isXinSanBan = /^82|83|87|88|430|420|400/.test(item.code)
       const isJingA = /^9/.test(item.code)
-      const bigPrice = item.trade > 10
+      const bigPrice = item.trade > 8
       return !isKechuang && !isXinSanBan && !isJingA && bigPrice
     })
 
@@ -53,21 +49,24 @@ async function main(day1, useLocalData = false) {
       const item_last = lastList.find((n) => n.code === item.code)
       // 昨天绿色下影线较长
       if (item_last && item_last.trade < item_last.open) {
-        const divH = Math.abs(item_last.trade - item_last.open)
-        const lineDownH = Math.abs(item_last.trade - item_last.low)
-        const lastdayLongShadow = lineDownH / divH > 2
+        const lastday_upLineH = item_last.high - item_last.open
+        const lastday_divH = item_last.open - item_last.trade
+        const lastday_downLineH = item_last.trade - item_last.low
+        // 长下影线
+        const lastdayLongShadow = lastday_downLineH / lastday_divH > 2
         if (lastdayLongShadow && item.trade > item.open) {
-          // 今天红色下影线较长
-          const today_divH = Math.abs(item.trade - item.open)
-          const today_lineDownH = Math.abs(item.open - item.low)
-          const isTodayLongShadow = today_lineDownH / today_divH > 2
-          if (isTodayLongShadow) {
+          // 今天红色下影线较长，接近红T
+          const today_lineUpH = item.high - item.trade
+          const today_divH = item.trade - item.open
+          const today_lineDownH = item.open - item.low
+          // 长下影线
+          const longLineDown = today_lineDownH / today_divH > 2
+          // 短上影线
+          const shortLineUp = today_lineDownH / today_lineUpH > 2
+          if (today_lineUpH < today_divH && longLineDown && shortLineUp) {
             resList.push(item)
           }
         }
-
-
-
       }
     })
 
@@ -76,12 +75,17 @@ async function main(day1, useLocalData = false) {
       console.log(`双针探底结果${index + 1}：`, item.code)
     })
 
+
+    if (resList.length <= 3) {
+      console.log('结果太少，不进行下一轮筛选')
+      return
+    }
     // 第二轮筛选
     let resList2 = []
     for (let index = 0; index < resList.length; index++) {
       const element = resList[index];
       const code = element.code
-      const res = await getRealTimeNet(code)
+      const res = await getNetRealTime(code)
       // console.log(`股票 ${code} 的实时资金流向:`, res)
       if (res) {
         if (res.extraLargeNetInflow > 0) {
