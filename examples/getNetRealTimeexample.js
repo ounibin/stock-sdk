@@ -1,7 +1,5 @@
 const {
-  getSectorRank,
-  getRealTimeNet
-
+  getNetRealTime
 } = require('../lib');
 
 
@@ -11,6 +9,6 @@ const {
 
 // 使用示例
 (async () => {
-  const data = await getRealTimeNet('601069');
+  const data = await getNetRealTime('002843');
   console.log('实时净流入:', data);
 })();
