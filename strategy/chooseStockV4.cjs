@@ -10,6 +10,12 @@ const {
 } = require('../lib')
 
 
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
 async function main(day1, useLocalData = false) {
   const lastDay = await getPreviousTradingDay(day1)
   try {
@@ -95,6 +101,7 @@ async function main(day1, useLocalData = false) {
       for (const l1 of list1) {
         // 等待当前请求完成，才会进入下一次循环
         const historyList = await getQuotes(l1.code, 20)
+        console.log(`historyList====`, historyList)
         const historyItem = historyList.find((n) => {
           const bigVol = n.volume / l1.volume > 3
           const isUp = n.trade > n.open
@@ -103,6 +110,7 @@ async function main(day1, useLocalData = false) {
         if (historyItem) {
           list2.push(l1)
         }
+        await sleep(2000)
       }
 
 

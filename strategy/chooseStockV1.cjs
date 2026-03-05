@@ -52,43 +52,39 @@ async function main(day1, useLocalData = false) {
     // 红十字
     list = filterRedCrossStar(list)
 
-    const resList = []
+    const list1 = []
     list.forEach((item) => {
       const item_last = lastList.find((n) => n.code === item.code)
-      if (item_last) {
-        if (item.close > item.open && item.volume > item_last.volume * 1.5 && item_last.open > item_last.close) {
-          resList.push(item)
-        }
+      if (item_last && item.close > item.open && item.volume > item_last.volume * 1.5 && item_last.open > item_last.close) {
+        list1.push(item)
       }
     })
 
     // 打印
-    resList.forEach((item, index) => {
+    console.log(`list1====`, list1.length)
+    list1.forEach((item, index) => {
       console.log(`放量结果${index + 1}：`, item.code)
     })
 
-    if (resList.length <= 3) {
-      console.log('结果太少，不进行下一轮筛选')
-      return
-    }
-
-    // 第二轮筛选
-    let resList2 = []
-    for (let index = 0; index < resList.length; index++) {
-      const element = resList[index];
-      const code = element.code
-      const res = await getNetRealTime(code)
-      // console.log(`股票 ${code} 的实时资金流向:`, res)
-      if (res) {
-        if (res.extraLargeNetInflow > 0 && res.largeNetInflow > 0) {
-          resList2.push(element)
+    if (list1.length > 3) {
+      第二轮筛选
+      let list2 = []
+      for (let index = 0; index < resList.length; index++) {
+        const element = resList[index];
+        const code = element.code
+        const res = await getNetRealTime(code)
+        // console.log(`股票 ${code} 的实时资金流向:`, res)
+        if (res) {
+          if (res.extraLargeNetInflow > 0 && res.largeNetInflow > 0) {
+            list2.push(element)
+          }
         }
       }
-    }
 
-    resList2.forEach((item, index) => {
-      console.log(`大单选股结果${index + 1}：`, item.code, item.name)
-    })
+      list2.forEach((item, index) => {
+        console.log(`大单选股结果${index + 1}：`, item.code, item.name)
+      })
+    }
 
   } catch (err) {
     console.log('分析出错err=', err)
@@ -96,4 +92,4 @@ async function main(day1, useLocalData = false) {
 }
 
 const today = dayjs().format('YYYYMMDD')
-main(today, true).catch(console.error)
+main(today, false).catch(console.error)
