@@ -25,7 +25,7 @@ async function main(day1, useLocalData = false) {
       list = await require(`./data/${day1}.json`)
     } else {
       console.log('正在获取实时行情数据...')
-      list = await getAllQuotesRealTime()
+      list = await getAllQuotes(day1)
       const filePath = path.join(__dirname, `data/${day1}.json`)
       fs.writeFileSync(filePath, JSON.stringify(list, null, 2))
     }
@@ -67,7 +67,7 @@ async function main(day1, useLocalData = false) {
     })
 
     if (list1.length > 3) {
-      第二轮筛选
+      // 第二轮筛选
       let list2 = []
       for (let index = 0; index < resList.length; index++) {
         const element = resList[index];
@@ -92,4 +92,4 @@ async function main(day1, useLocalData = false) {
 }
 
 const today = dayjs().format('YYYYMMDD')
-main(today, false).catch(console.error)
+main(today, true).catch(console.error)
