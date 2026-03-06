@@ -11,6 +11,17 @@ const {
 
 
 async function main(day1, useLocalData = false) {
+  const now = dayjs()
+  const todayStr = now.format('YYYYMMDD')
+
+  // 如果指定的是今天，则必须在17:00之后才能运行
+  if (day1 === todayStr && now.hour() < 17) {
+    console.log('今天是交易日，请在下午5点后再运行')
+    return
+  }
+
+
+
   if (!day1) {
     console.log('请提供有效的日期参数')
     throw new Error('Invalid date parameter, please provide a valid date string in the format YYYYMMDD.')
@@ -92,4 +103,4 @@ async function main(day1, useLocalData = false) {
 }
 
 const today = dayjs().format('YYYYMMDD')
-main(today, true).catch(console.error)
+main(today, false).catch(console.error)
