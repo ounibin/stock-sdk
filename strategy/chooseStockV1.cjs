@@ -80,8 +80,8 @@ async function main(day1, useLocalData = false) {
     if (list1.length > 3) {
       // 第二轮筛选
       let list2 = []
-      for (let index = 0; index < resList.length; index++) {
-        const element = resList[index];
+      for (let index = 0; index < list1.length; index++) {
+        const element = list1[index];
         const code = element.code
         const res = await getNetRealTime(code)
         // console.log(`股票 ${code} 的实时资金流向:`, res)
