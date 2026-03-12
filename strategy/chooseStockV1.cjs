@@ -102,5 +102,6 @@ async function main(day1, useLocalData = false) {
   }
 }
 
+// const today = dayjs().format('20260311')
 const today = dayjs().format('YYYYMMDD')
 main(today, false).catch(console.error)

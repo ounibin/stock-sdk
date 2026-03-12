@@ -103,9 +103,10 @@ async function main(day1, useLocalData = false) {
         const historyList = await getQuotes(l1.code, 20)
         console.log(`historyList====`, historyList)
         const historyItem = historyList.find((n) => {
+          const changePercent = (n.close - n.open) / n.open * 100
           const bigVol = n.volume / l1.volume > 3
           const isUp = n.trade > n.open
-          return isUp && bigVol
+          return changePercent > 9
         })
         if (historyItem) {
           list2.push(l1)
@@ -152,5 +153,6 @@ async function main(day1, useLocalData = false) {
 }
 
 
+// const day1 = dayjs().format('20260311')
 const day1 = dayjs().format('YYYYMMDD')
 main(day1, false).catch(console.error)
