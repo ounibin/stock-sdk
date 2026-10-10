@@ -9,39 +9,60 @@ const {
   getAllQuotesRealTime
 } = require('../lib')
 
+const filterRedT = require('../lib/filter/filterRedT.cjs')
+const filterGreenT = require('../lib/filter/filterGreenT.cjs')
 
-async function main(day1, useLocalData = false) {
+
+async function main(day1) {
   const now = dayjs()
   const todayStr = now.format('YYYYMMDD')
-
-  // 如果指定的是今天，则必须在17:00之后才能运行
-  if (day1 === todayStr && now.hour() < 17) {
-    console.log('今天是交易日，请在下午5点后再运行')
-    return
-  }
-
 
 
   if (!day1) {
     console.log('请提供有效的日期参数')
     throw new Error('Invalid date parameter, please provide a valid date string in the format YYYYMMDD.')
   }
+
+
+  const isOpen = await getOpenDate(day1)
+  if (!isOpen) {
+    console.warn(day1, `不是开盘日，请提供有效的开盘日参数`)
+    return
+  } else if (day1 === todayStr && now.hour() < 17) {
+    // 如果今天开盘日，则必须在17:00之后才能运行
+    console.warn('今天是交易日，请在下午5点后再运行')
+    return
+  }
+
+
   const lastDay = await getPreviousTradingDay(day1)
   console.log(`指定开盘日====`, day1)
   console.log(`上个开盘日====`, lastDay)
   try {
     let list = []
-    if (useLocalData) {
-      console.log('使用本地数据，跳过网络请求')
+    try {
       list = await require(`./data/${day1}.json`)
-    } else {
-      console.log('正在获取实时行情数据...')
+      console.log(day1, '存在本地数据，正在使用本地行情数据...')
+    } catch (error) {
+      console.warn(`获取指定数据(${day1})出错:`, error)
       list = await getAllQuotes(day1)
+      // 获取后，保存到本地文件
       const filePath = path.join(__dirname, `data/${day1}.json`)
       fs.writeFileSync(filePath, JSON.stringify(list, null, 2))
     }
-    const lastList = await getAllQuotes(lastDay)
-    console.log('上个开盘日: ', lastDay, '数据长度为', lastList.length)
+
+    // 获取上个开盘日的行情数据
+    let lastList = []
+    try {
+      lastList = await require(`./data/${lastDay}.json`) || []
+    } catch (error) {
+      console.warn(`获取上个开盘日数据(${lastDay})出错:`, error)
+      console.log(lastDay, '没有本地数据，正在获取历史行情数据...')
+      lastList = await getAllQuotes(lastDay)
+      // 获取后，保存到本地文件
+      const filePath = path.join(__dirname, `data/${lastDay}.json`)
+      fs.writeFileSync(filePath, JSON.stringify(lastList, null, 2))
+    }
 
     if (day1.length === 0) {
       console.log(`${day1}数据异常`)
@@ -51,7 +72,7 @@ async function main(day1, useLocalData = false) {
       return
     }
 
-    // 条件选股
+    // 排除 科创、北交所、新三板的股
     list = list.filter((item) => {
       const isKechuang = /^688|689|787|789/.test(item.code)
       const isXinSanBan = /^82|83|87|88|430|420|400/.test(item.code)
@@ -60,13 +81,14 @@ async function main(day1, useLocalData = false) {
       return !isKechuang && !isXinSanBan && !isJingA
     })
 
-    // 红十字
-    list = filterRedCrossStar(list)
+
+    list = filterRedT(list)
 
     const list1 = []
+    //  过滤掉绿并且缩量的股票
     list.forEach((item) => {
       const item_last = lastList.find((n) => n.code === item.code)
-      if (item_last && item.close > item.open && item.volume > item_last.volume * 1.5 && item_last.open > item_last.close) {
+      if (item_last && item.volume > item_last.volume * 1.5 && item_last.open > item_last.close) {
         list1.push(item)
       }
     })
@@ -77,31 +99,11 @@ async function main(day1, useLocalData = false) {
       console.log(`放量结果${index + 1}：`, item.code)
     })
 
-    if (list1.length > 3) {
-      // 第二轮筛选
-      let list2 = []
-      for (let index = 0; index < list1.length; index++) {
-        const element = list1[index];
-        const code = element.code
-        const res = await getNetRealTime(code)
-        // console.log(`股票 ${code} 的实时资金流向:`, res)
-        if (res) {
-          if (res.extraLargeNetInflow > 0 && res.largeNetInflow > 0) {
-            list2.push(element)
-          }
-        }
-      }
-
-      list2.forEach((item, index) => {
-        console.log(`大单选股结果${index + 1}：`, item.code, item.name)
-      })
-    }
-
   } catch (err) {
     console.log('分析出错err=', err)
   }
 }
 
-// const today = dayjs().format('20260311')
-const today = dayjs().format('YYYYMMDD')
+const today = dayjs().format('20261009')
+// const today = dayjs().format('YYYYMMDD')
 main(today, false).catch(console.error)
