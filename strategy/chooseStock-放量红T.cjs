@@ -11,6 +11,7 @@ const {
 
 const filterRedT = require('../lib/filter/filterRedT.cjs')
 const filterGreenT = require('../lib/filter/filterGreenT.cjs')
+const getOpenDate = require('../lib/getter/getOpenDate.cjs')
 
 
 async function main(day1) {
@@ -104,6 +105,6 @@ async function main(day1) {
   }
 }
 
-const today = dayjs().format('20261009')
-// const today = dayjs().format('YYYYMMDD')
+// const today = dayjs().format('20261009')
+const today = dayjs().format('YYYYMMDD')
 main(today, false).catch(console.error)

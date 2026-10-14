@@ -72,6 +72,7 @@ async function main(day1) {
       const isXinSanBan = /^82|83|87|88|430|420|400/.test(item.code)
       const isJingA = /^9/.test(item.code)
       const bigPrice = item.trade > 10
+      const smallPrice = item.trade < 50
       return !isKechuang && !isXinSanBan && !isJingA
     })
 
@@ -97,6 +98,6 @@ async function main(day1) {
   }
 }
 
-const today = dayjs().format('20261009')
-// const today = dayjs().format('YYYYMMDD')
+// const today = dayjs().format('20261009')
+const today = dayjs().format('YYYYMMDD')
 main(today, false).catch(console.error)

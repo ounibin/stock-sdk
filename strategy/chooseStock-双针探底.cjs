@@ -133,6 +133,6 @@ async function main(day1) {
   }
 }
 
-const today = dayjs().format('20261008')
-// const today = dayjs().format('YYYYMMDD')
+// const today = dayjs().format('20261008')
+const today = dayjs().format('YYYYMMDD')
 main(today, false).catch(console.error)
