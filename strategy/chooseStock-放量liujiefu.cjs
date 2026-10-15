@@ -11,6 +11,7 @@ const {
 
 const filterRedT = require('../lib/filter/filterRedT.cjs')
 const filterGreenT = require('../lib/filter/filterGreenT.cjs')
+const formatRes = require('../lib/utils/formatRes.cjs')
 
 
 async function main(day1) {
@@ -87,16 +88,16 @@ async function main(day1) {
       }
     })
 
-    // 打印
-    resList.forEach((item, index) => {
-      console.log(`放量结果${index + 1}：`, item.code)
-    })
+
+    // 保存结果到本地文件
+    const filePath = path.join(__dirname, `ResData/${day1}放量liujiefu.json`)
+    fs.writeFileSync(filePath, JSON.stringify(formatRes(resList)))
 
   } catch (err) {
     console.log('分析出错err=', err)
   }
 }
 
-// const today = dayjs().format('20261009')
-const today = dayjs().format('YYYYMMDD')
+const today = dayjs().format('20261014')
+// const today = dayjs().format('YYYYMMDD')
 main(today, false).catch(console.error)

@@ -12,6 +12,7 @@ const {
 const filterRedT = require('../lib/filter/filterRedT.cjs')
 const filterGreenT = require('../lib/filter/filterGreenT.cjs')
 const getOpenDate = require('../lib/getter/getOpenDate.cjs')
+const formatRes = require('../lib/utils/formatRes.cjs')
 
 
 async function main(day1) {
@@ -89,21 +90,20 @@ async function main(day1) {
     const list1 = []
     list.forEach((item) => {
       const item_last = lastList.find((n) => n.code === item.code)
-      if (item_last && item.close > item.open && item.volume > item_last.volume * 1.5 && item_last.open > item_last.close) {
+      if (item_last && item.volume > item_last.volume * 2 && item_last.open > item_last.close) {
         list1.push(item)
       }
     })
-    // 打印
-    console.log(`list1====`, list1.length)
-    list1.forEach((item, index) => {
-      console.log(`结果${index + 1}：`, item.code)
-    })
+
+    // 保存结果到本地文件
+    const filePath = path.join(__dirname, `ResData/${day1}十字反转.json`)
+    fs.writeFileSync(filePath, JSON.stringify(formatRes(list1)))
 
   } catch (err) {
     console.log('分析出错err=', err)
   }
 }
 
-// const today = dayjs().format('20261009')
-const today = dayjs().format('YYYYMMDD')
+const today = dayjs().format('20261014')
+// const today = dayjs().format('YYYYMMDD')
 main(today, false).catch(console.error)

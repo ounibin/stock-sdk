@@ -11,6 +11,7 @@ const {
 
 const filterRedT = require('../lib/filter/filterRedT.cjs')
 const filterGreenT = require('../lib/filter/filterGreenT.cjs')
+const formatRes = require('../lib/utils/formatRes.cjs')
 
 
 async function main(day1) {
@@ -81,23 +82,23 @@ async function main(day1) {
       const item_last = lastList.find((n) => n.code === item.code)
       if (item_last) {
         const lessThenLastDay = item.volume / item_last.volume < 0.5
+        const fudu = (Math.abs(item.trade - item_last.trade) / item_last.trade) < 0.01
         // 缩量下跌
-        if (item.trade < item.open && lessThenLastDay) {
+        if (item.trade < item.open && lessThenLastDay && item.trade < item_last.trade && fudu) {
           resList.push(item)
         }
       }
     })
 
-    // 打印
-    resList.forEach((item, index) => {
-      console.log(`结果${index + 1}：`, item.code)
-    })
+    // 保存结果到本地文件
+    const filePath = path.join(__dirname, `ResData/${day1}缩量下跌.json`)
+    fs.writeFileSync(filePath, JSON.stringify(formatRes(resList)))
 
   } catch (err) {
     console.log('分析出错err=', err)
   }
 }
 
-// const today = dayjs().format('20261009')
-const today = dayjs().format('YYYYMMDD')
+const today = dayjs().format('20261014')
+// const today = dayjs().format('YYYYMMDD')
 main(today, false).catch(console.error)
