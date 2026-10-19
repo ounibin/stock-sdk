@@ -15,7 +15,7 @@ const getOpenDate = require('../lib/getter/getOpenDate.cjs')
 const formatRes = require('../lib/utils/formatRes.cjs')
 
 
-async function main(day1) {
+module.exports = async (day1) => {
   const now = dayjs()
   const todayStr = now.format('YYYYMMDD')
 
@@ -103,7 +103,3 @@ async function main(day1) {
     console.log('分析出错err=', err)
   }
 }
-
-const today = dayjs().format('20261014')
-// const today = dayjs().format('YYYYMMDD')
-main(today, false).catch(console.error)
