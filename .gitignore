@@ -1,5 +1,7 @@
-strategy/data/**
-strategy/ResData/**
+lib/strategy/data/**
+!lib/strategy/data/.gitkeep
+lib/strategy/ResData/**
+!lib/strategy/ResData/.gitkeep
 node_modules
 package-lock.json
 yarn.lock
