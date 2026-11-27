@@ -1,6 +1,6 @@
 {
   "name": "stock-sdk",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "中国股票市场SDK，支持实时行情、板块排名和交易所判断等功能",
   "main": "lib/index.js",
   "scripts": {
@@ -20,7 +20,6 @@
     "axios": "^1.13.5",
     "cheerio": "^1.2.0",
     "dayjs": "^1.11.19",
-    "eastmoney-data-sdk": "^1.0.5",
     "iconv-lite": "^0.7.2"
   },
   "directories": {
